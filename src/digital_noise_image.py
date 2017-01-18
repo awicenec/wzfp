@@ -57,13 +57,14 @@ def img_rounding_noise(psize=100):
         the image as a numpy array (psize,psize).dtype=np.float64
     """
     na=np.array(np.random.sample(psize**2)*100,dtype=np.int8) # random integers [0..100[
-    r32 = np.array(na, dtype=np.float32)/3 # produce SP array
-    r64 = np.array(na, dtype=np.float64)/3 # produce DP array
+    r32 = np.array(na, dtype=np.float32)/np.pi # produce SP array
+    r64 = np.array(na, dtype=np.float64)/np.pi # produce DP array
     r32_64=np.array(r32,dtype=np.float64) # convert SP array to DP
     d64 = r64 - r32_64 # difference between the two (should be == 0!)
     d32 = np.array(d64,dtype=np.float32)
     img = d32.reshape(psize,psize) # make 2-D
     img += np.abs(img.min()) # shift to all positive
+    img = img/np.max(img) # normalise to maximum difference
     return img
 
 
@@ -126,7 +127,6 @@ USAGE
 
         img_producer = globals()[method]
         img = img_producer(psize=psize)
-        print "Maximum difference: %f" % np.max(img)
         plt.imshow(img)
         plt.show()
         return 0

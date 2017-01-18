@@ -47,9 +47,9 @@ def uvfitsSplit(ff, N):
     nparts = ff[0].header['GCOUNT']/N
     if (ff[0].header['GCOUNT']/float(N) - nparts)> 0.5:
         N += 1
-    narr = np.ones(N,'i32') * nparts
-    narr[-1] = ff[0].header['GCOUNT'] - (N-1)*nparts
-    #*** There must be a bug here!!!***
+    narr = np.ones(N, np.int32) * nparts # put number of groups into array
+    narr[-1] = ff[0].header['GCOUNT'] - (N-1)*nparts # adjust last element
+    #*** This is not complete, but this function is not called anywhere!!!***
     for i in narr:
         pyfits.open()
     return narr
@@ -106,14 +106,13 @@ def coveragePlot(bins):
     return
 
 if __name__ == "__main__":
-    #These should be input paramaters:
+    
     fname = '/Users/awicenec/tmp/1125780432.uvfits'
 
     parser = argparse.ArgumentParser(description="Histogram of uvfits data fractions")
     parser.add_argument("-f", "--fileName", default=fname, help="The name of the uvfits file", type=str)
     parser.add_argument("-c", "--count", help="Number of groups to read", default=100, type=int)
     a = parser.parse_args()
-
  
     ff=pyfits.open(a.fileName)
     data = ff[0].data
